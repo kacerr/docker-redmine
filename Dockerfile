@@ -28,11 +28,13 @@ RUN yum -y install git hg && \
 
 ENV RAILS_ENV=production
 
+COPY ./install/Gemfile /srv/redmine/current/
+COPY ./install/redmine_git_hosting/Gemfile /srv/redmine/current/plugins/redmine_git_hosting/
+
 WORKDIR /srv/redmine/current
 RUN gem update bundler && \
-    bundle install --without development test && \
+    bundle install --local && \
     rake generate_secret_token
 
-RUN yum -y localinstall `find /tmp/install/rpms`
-
-CMD ["/bin/bash"]
+CMD /bin/bash -l -c "rails s -b 0.0.0.0"
+#CMD ["rails","s -b 0.0.0.0"]
